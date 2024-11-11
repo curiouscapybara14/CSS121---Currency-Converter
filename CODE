@@ -1,0 +1,803 @@
+#include <iostream>  // libraries input/output operations
+#include <map>       // using maps (key-value pairs)
+#include <string>    // string operations
+#include <cctype>    // character handling (ex: converting to uppercase)
+#include <iomanip>   // formatting output (ex: setting decimal places)
+#include <vector>    // using dynamic arrays or lists
+
+using namespace std;
+
+// calling 
+void showLoadingScreen() {
+    cout << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\n"
+         << "\t\t\t\t\t\t\t\t\tThe Currency Converter\n";
+        
+}
+
+struct Conversion { // conversion structure 
+    string fromCurrency;// orig currency 
+    string toCurrency; // goal currency 
+    double amount;
+    double convertedAmount;
+};
+
+// function to clear the console screen
+void clearScreen() {
+    #ifdef _WIN32
+        system("CLS"); // Windows
+    #else
+        system("clear"); // Unix-based
+    #endif
+}
+
+bool isValidNumber(const string& str) {
+    for (char c : str) {
+        if (!isdigit(c) && c != '.') {
+            return false;
+        }
+    }
+    return true;
+}
+
+void showHistory(const vector<Conversion>& history) {
+    if (history.empty()) {
+        cout << "No conversions have been made yet.\n";
+        return;
+    }
+    
+    cout << "\n===== Conversion History =====\n";
+    for (size_t i = 0; i < history.size(); ++i) {
+        const auto& conv = history[i];
+        cout << "Conversion " << (i + 1) << ":\n";  // print conversion number
+        cout << "Amount: " << conv.amount << " " << conv.fromCurrency << " -> "
+             << conv.convertedAmount << " " << conv.toCurrency << endl;
+        cout << "------------------------------\n"; 
+    }
+    cout << "==============================\n";
+}
+
+
+int main() {
+
+    showLoadingScreen();
+    
+    // Wait for the user to press Enter
+    cin.ignore();
+        
+
+    // USD
+    map<string, double> toUsd;
+ 
+    toUsd["USD"] = 1.0;    
+    toUsd["PHP"] = 0.018;  
+    toUsd["GBP"] = 1.22;    
+    toUsd["JPY"] = 0.0067;  
+    toUsd["KWD"] = 3.26;
+    toUsd["BHD"] = 2.65;
+    toUsd["OMR"] = 2.60;
+    toUsd["JOD"] = 1.41;
+    toUsd["GIP"] = 1.30404;
+    toUsd["KYD"] = 1.20;
+    toUsd["CHF"] = 1.16;
+    toUsd["CAD"] = 0.72;
+    toUsd["AUD"] = 0.67;
+    toUsd["SDG"] = 0.0017;
+    toUsd["BND"] = 0.76;
+    toUsd["CHN"] = 0.14045;
+    toUsd["LYD"] = 0.21;
+    toUsd["NZD"] = 0.61;
+    toUsd["FJD"] = 0.45;
+    toUsd["BMD"] = 1.00;
+    toUsd["EUR"] = 1.06;
+ 
+    // EUR
+    map<string, double> toEur;
+ 
+    toEur["USD"] = 0.92;
+    toEur["EUR"] = 1.0;
+    toEur["PHP"] = 0.016;
+    toEur["GBP"] = 1.20;
+    toEur["JPY"] = 0.0061;
+    toEur["KWD"] = 3.02;
+    toEur["BHD"] = 2.45;
+    toEur["OMR"] = 2.40;
+    toEur["JOD"] = 1.30;
+    toEur["GIP"] = 1.20;
+    toEur["KYD"] = 1.11;
+    toEur["CHF"] = 1.07;
+    toEur["CAD"] = 0.67;
+    toEur["AUD"] = 0.62;
+    toEur["SDG"] = 0.0015;
+    toEur["BND"] = 0.70;
+    toEur["CHN"] = 0.12985;
+    toEur["LYD"] = 0.19;
+    toEur["NZD"] = 0.56;
+    toEur["FJD"] = 0.41;
+    toEur["BMD"] = 0.92;
+    toEur["BZD"] = 0.46;
+ 
+    // PHP
+    map<string, double> toPhp;
+ 
+    toPhp["USD"] = 56.29;
+    toPhp["EUR"] = 61.02;
+    toPhp["PHP"] = 1;
+    toPhp["GBP"] = 73.12;
+    toPhp["JPY"] = 0.37;
+    toPhp["KWD"] = 183.12;
+    toPhp["BHD"] = 149.18;
+    toPhp["OMR"] = 146.63;
+    toPhp["JOD"] = 79.96;
+    toPhp["GIP"] = 73.50;
+    toPhp["KYD"] = 69.79;
+    toPhp["CHF"] = 64.01;
+    toPhp["CAD"] = 42.97;
+    toPhp["AUD"] = 37.35;
+    toPhp["SDG"] = 1.14;
+    toPhp["BND"] = 42.50;
+    toPhp["CNY"] = 7.82;
+    toPhp["LYD"] = 5.35;
+    toPhp["NZD"] = 34.05;
+    toPhp["FJD"] = 24.08;
+    toPhp["BMD"] = 56.29;
+    toPhp["BZD"] = 28.64;
+ 
+    // GBP
+    map<string, double> toGbp;
+ 
+    toGbp["USD"] = 0.7706;
+    toGbp["EUR"] = 0.7114;
+    toGbp["PHP"] = 0.0136;
+    toGbp["GBP"] = 1;
+    toGbp["JPY"] = 0.0051;
+    toGbp["KWD"] = 2.2001;
+    toGbp["BHD"] = 1.6472;
+    toGbp["OMR"] = 1.6511;
+    toGbp["JOD"] = 0.5744;
+    toGbp["GIP"] = 0.7706;
+    toGbp["KYD"] = 0.9259;
+    toGbp["CHF"] = 0.8305;
+    toGbp["CAD"] = 0.5583;
+    toGbp["AUD"] = 0.5145;
+    toGbp["SDG"] = 0.0166;
+    toGbp["BND"] = 0.5558;
+    toGbp["CNY"] = 0.1064;
+    toGbp["LYD"] = 0.0610;
+    toGbp["NZD"] = 0.5090;
+    toGbp["FJD"] = 0.3340;
+    toGbp["BMD"] = 0.7706;
+    toGbp["BZD"] = 0.3853;
+ 
+    // JPY
+    map<string, double> toJpy;
+ 
+    toJpy["USD"] = 149.82;  
+    toJpy["EUR"] = 159.56;  
+    toJpy["PHP"] = 2.58;  
+    toJpy["GBP"] = 182.72;  
+    toJpy["JPY"] = 1;  
+    toJpy["KWD"] = 485.98;  
+    toJpy["BHD"] = 396.75;  
+    toJpy["OMR"] = 389.45;  
+    toJpy["JOD"] = 211.40;  
+    toJpy["GIP"] = 182.72;  
+    toJpy["KYD"] = 179.89;  
+    toJpy["CHF"] = 164.58;  
+    toJpy["CAD"] = 108.92;  
+    toJpy["AUD"] = 94.49;  
+    toJpy["SDG"] = 0.25;  
+    toJpy["BND"] = 109.65;  
+    toJpy["CNY"] = 20.48;  
+    toJpy["LYD"] = 30.94;  
+    toJpy["NZD"] = 88.38;  
+    toJpy["FJD"] = 66.69;  
+    toJpy["BMD"] = 149.82;  
+    toJpy["BZD"] = 74.90;
+ 
+    //KWD
+    map<string, double> toKwd;
+ 
+    toKwd["USD"] = 0.3067;  
+    toKwd["EUR"] = 0.3299;  
+    toKwd["PHP"] = 0.0053;  
+    toKwd["GBP"] = 0.3887;  
+    toKwd["JPY"] = 0.0020;  
+    toKwd["KWD"] = 1;  
+    toKwd["BHD"] = 0.8088;  
+    toKwd["OMR"] = 0.7952;  
+    toKwd["JOD"] = 0.4329;  
+    toKwd["GIP"] = 0.3887;  
+    toKwd["KYD"] = 0.3683;  
+    toKwd["CHF"] = 0.3440;  
+    toKwd["CAD"] = 0.2245;  
+    toKwd["AUD"] = 0.1960;  
+    toKwd["SDG"] = 0.0005;  
+    toKwd["BND"] = 0.2245;  
+    toKwd["CNY"] = 0.0418;  
+    toKwd["LYD"] = 0.0641;  
+    toKwd["NZD"] = 0.1803;  
+    toKwd["FJD"] = 0.1338;  
+    toKwd["BMD"] = 0.3067;  
+    toKwd["BZD"] = 0.1533;
+ 
+    // BHD
+    map<string, double> toBhd;
+   
+    toBhd["USD"] = 0.3770;  
+    toBhd["EUR"] = 0.4002;  
+    toBhd["PHP"] = 0.0067;  
+    toBhd["GBP"] = 0.4614;  
+    toBhd["JPY"] = 0.0025;  
+    toBhd["KWD"] = 1.2140;  
+    toBhd["BHD"] = 1;  
+    toBhd["OMR"] = 0.9780;  
+    toBhd["JOD"] = 0.5310;  
+    toBhd["GIP"] = 0.4614;  
+    toBhd["KYD"] = 0.4530;  
+    toBhd["CHF"] = 0.4150;  
+    toBhd["CAD"] = 0.2750;  
+    toBhd["AUD"] = 0.2390;  
+    toBhd["SDG"] = 0.0006;  
+    toBhd["BND"] = 0.2770;  
+    toBhd["CNY"] = 0.0510;  
+    toBhd["LYD"] = 0.0770;  
+    toBhd["NZD"] = 0.2190;  
+    toBhd["FJD"] = 0.1670;  
+    toBhd["BMD"] = 0.3770;  
+    toBhd["BZD"] = 0.1880;
+ 
+    // OMR
+    map<string, double> toOmr;
+ 
+    toOmr["USD"] = 0.3845;  
+    toOmr["EUR"] = 0.4068;  
+    toOmr["PHP"] = 0.0068;  
+    toOmr["GBP"] = 0.4711;  
+    toOmr["JPY"] = 0.0026;  
+    toOmr["KWD"] = 1.2604;  
+    toOmr["BHD"] = 1.021;  
+    toOmr["OMR"] = 1.0000;  
+    toOmr["JOD"] = 0.5424;  
+    toOmr["GIP"] = 0.4711;  
+    toOmr["KYD"] = 0.4629;  
+    toOmr["CHF"] = 0.4262;  
+    toOmr["CAD"] = 0.2807;  
+    toOmr["AUD"] = 0.2411;  
+    toOmr["SDG"] = 0.0007;  
+    toOmr["BND"] = 0.2816;  
+    toOmr["CNY"] = 0.0526;  
+    toOmr["LYD"] = 0.0793;  
+    toOmr["NZD"] = 0.2269;  
+    toOmr["FJD"] = 0.1685;  
+    toOmr["BMD"] = 0.3845;  
+    toOmr["BZD"] = 0.1919;
+ 
+    // JOD
+ 
+    map<string, double> toJod;
+ 
+    toJod["USD"] = 0.709;  
+    toJod["EUR"] = 0.751;  
+    toJod["PHP"] = 0.012;  
+    toJod["GBP"] = 0.864;  
+    toJod["JPY"] = 0.0047;  
+    toJod["KWD"] = 2.278;  
+    toJod["BHD"] = 1.884;  
+    toJod["OMR"] = 1.839;  
+    toJod["JOD"] = 1.000;  
+    toJod["GIP"] = 0.864;  
+    toJod["KYD"] = 0.850;  
+    toJod["CHF"] = 0.781;  
+    toJod["CAD"] = 0.514;  
+    toJod["AUD"] = 0.441;  
+    toJod["SDG"] = 0.0012;  
+    toJod["BND"] = 0.516;  
+    toJod["CNY"] = 0.096;  
+    toJod["LYD"] = 0.145;  
+    toJod["NZD"] = 0.417;  
+    toJod["FJD"] = 0.309;  
+    toJod["BMD"] = 0.709;  
+    toJod["BZD"] = 0.355;
+ 
+    // GIP
+    map<string, double> toGip;
+ 
+    toGip["USD"] = 0.00648;  
+    toGip["EUR"] = 0.00611;  
+    toGip["PHP"] = 0.37;  
+    toGip["GBP"] = 0.0053;  
+    toGip["JPY"] = 1;  
+    toGip["KWD"] = 0.0002;  
+    toGip["BHD"] = 0.00243;  
+    toGip["OMR"] = 0.00249;  
+    toGip["JOD"] = 0.00459;  
+    toGip["GIP"] = 0.0053;  
+    toGip["KYD"] = 0.00541;  
+    toGip["CHF"] = 0.00589;  
+    toGip["CAD"] = 0.00891;  
+    toGip["AUD"] = 0.01001;  
+    toGip["SDG"] = 4.07;  
+    toGip["BND"] = 0.0088;  
+    toGip["CNY"] = 0.0479;  
+    toGip["LYD"] = 0.031;  
+    toGip["NZD"] = 0.0109;  
+    toGip["FJD"] = 0.0149;  
+    toGip["BMD"] = 0.00648;  
+    toGip["BZD"] = 0.0129;
+ 
+    // KYD
+    map<string, double> toKyd;
+ 
+    toKyd["USD"] = 1.2195;  
+    toKyd["EUR"] = 1.1518;  
+    toKyd["PHP"] = 68.77;  
+    toKyd["GBP"] = 1.0043;  
+    toKyd["JPY"] = 182.91;  
+    toKyd["KWD"] = 0.3731;  
+    toKyd["BHD"] = 0.459;  
+    toKyd["OMR"] = 0.469;  
+    toKyd["JOD"] = 0.864;  
+    toKyd["GIP"] = 1.004;  
+    toKyd["KYD"] = 1;  
+    toKyd["CHF"] = 1.112;  
+    toKyd["CAD"] = 1.666;  
+    toKyd["AUD"] = 1.869;  
+    toKyd["SDG"] = 731.1;  
+    toKyd["BND"] = 1.66;  
+    toKyd["CNY"] = 8.94;  
+    toKyd["LYD"] = 5.73;  
+    toKyd["NZD"] = 2.04;  
+    toKyd["FJD"] = 2.8;  
+    toKyd["BMD"] = 1.219;  
+    toKyd["BZD"] = 2.44;
+ 
+    //  CHF
+    map<string, double> toChf;  
+ 
+    toChf["USD"] = 0.86;
+    toChf["EUR"] = 0.94;
+    toChf["PHP"] = 0.015;
+    toChf["GBP"] = 1.12;
+    toChf["JPY"] = 0.0057;
+    toChf["KWD"] = 2.82;
+    toChf ["BHD"] = 2.29;
+    toChf ["OMR"] = 2.25;
+    toChf ["JOD"] = 1.22;
+    toChf ["GIP"] = 1.12;
+    toChf ["KYD"] = 2.82;
+    toChf ["CHF"] = 1.00;
+    toChf ["CAD"] =  0.63;
+    toChf ["AUD"] = 0.58;
+    toChf ["SDG"] = 0.66;
+    toChf ["BND"] = 0.66;
+    toChf ["CNY"] = 0.12;
+    toChf ["LYD"] = 0.18;
+    toChf ["NZD"] = 0.52;
+    toChf ["FJD"] = 0.39;
+    toChf ["BMD"] = 0.87;
+    toChf ["BZD"] = 0.43;
+ 
+    // CAD
+    map<string, double> toCad;
+ 
+    toCad["USD"] = 1.38;
+    toCad["EUR"] = 1.50;
+    toCad["PHP"] = 0.024 ;
+    toCad["GBP"] = 1.80 ;
+    toCad["JPY"] = 0.0092 ;
+    toCad["KWD"] = 4.51 ;
+    toCad ["BHD"] = 3.67 ;
+    toCad ["OMR"] = 3.59 ;
+    toCad ["JOD"] = 1.95 ;
+    toCad ["GIP"] = 1.79 ;
+    toCad ["KYD"] = 1.65 ;
+    toCad ["CHF"] =1.60 ;
+    toCad ["CAD"] =  1.00 ;
+    toCad ["AUD"] = 0.92 ;
+    toCad ["SDG"] = 0.0023 ;
+    toCad ["BND"] = 1.05 ;
+    toCad ["CNY"] = 0.19 ;
+    toCad ["LYD"] = 0.29 ;
+    toCad ["NZD"] = 0.84 ;
+    toCad ["FJD"] = 0.62 ;
+    toCad ["BMD"] = 1.38 ;
+    toCad ["BZD"] = 0.68 ;
+ 
+    // AUD
+    map<string, double> toAud;
+ 
+    toAud["USD"] = 1.49;
+    toAud["EUR"] = 1.62;
+    toAud["PHP"] = 0.026;
+    toAud["GBP"] = 1.94;
+    toAud["JPY"] = 0.0099;
+    toAud["KWD"] = 4.88;
+    toAud ["BHD"] =3.97;
+    toAud ["OMR"] = 3.88;
+    toAud ["JOD"] = 2.11;
+    toAud ["GIP"] = 1.93763;
+    toAud ["KYD"] = 1.79;
+    toAud ["CHF"] = 1.73;
+    toAud ["CAD"] =  1.08;
+    toAud ["AUD"] = 1.00;
+    toAud ["SDG"] = 0.0025;
+    toAud ["BND"] = 1.14;
+    toAud ["CNY"] = 0.2110;
+    toAud ["LYD"] = 0.31;
+    toAud ["NZD"] = 0.91;
+    toAud ["FJD"] = 0.67;
+    toAud ["BMD"] = 1.50;
+    toAud ["BZD"] = 0.74;
+ 
+    // SDG  
+    map<string, double> toSdg;
+ 
+    toSdg["USD"] = 1.32;
+    toSdg["EUR"] = 1.42;
+    toSdg["PHP"] = 0.023;
+    toSdg["GBP"] = 1.71;
+    toSdg["JPY"] = 0.0087;
+    toSdg["KWD"] = 4.29;
+    toSdg["BHD"] = 3.49;
+    toSdg["OMR"] = 3.42;
+    toSdg["JOD"] = 1.86;
+    toSdg["GIP"] = 1.71;
+    toSdg["KYD"] = 4.29;
+    toSdg["CHF"] = 1.52;
+    toSdg["CAD"] = 435.03;
+    toSdg["AUD"] = 0.88;
+    toSdg["SDG"] = 1.00;
+    toSdg["BND"] = 1.00;
+    toSdg["CNY"] = 1.52;
+    toSdg["LYD"] = 0.21;
+    toSdg["NZD"] = 0.80;
+ 
+    //BND
+    map<string, double> toBnd;
+ 
+    toBnd["USD"] = 1.32;
+    toBnd["EUR"] = 1.45;
+    toBnd["PHP"] = 0.0228;
+    toBnd["GBP"] = 1.67;
+    toBnd["JPY"] = 0.0092;
+    toBnd["KWD"] = 4.46;
+    toBnd["BHD"] = 3.63;
+    toBnd["OMR"] = 3.56;
+    toBnd["JOD"] = 1.93;
+    toBnd["GIP"] = 1.67;
+    toBnd["KYD"] = 1.65;
+    toBnd["CHF"] = 1.50;
+    toBnd["CAD"] = 1.00;
+    toBnd["AUD"] = 0.88;
+    toBnd["SDG"] = 0.0023;
+    toBnd["BND"] = 1.00;
+    toBnd["CNY"] = 0.19;
+    toBnd["LYD"] = 0.28;
+    toBnd["NZD"] = 0.82;
+    toBnd["FJD"] = 0.62;
+    toBnd["BMD"] = 1.37;
+    toBnd["BZD"] = 0.68;
+ 
+    // CNY
+    map<string, double> toCny;
+ 
+    toCny["USD"] = 7.12;
+    toCny["EUR"] = 7.70;
+    toCny["PHP"] = 0.12;
+    toCny["GBP"] = 8.71;
+    toCny["JPY"] = 0.047;
+    toCny["KWD"] = 23.13;
+    toCny["BHD"] = 18.88;
+    toCny["OMR"] = 18.46;
+    toCny["JOD"] = 10.03;
+    toCny["GIP"] = 8.71;
+    toCny["KYD"] = 8.51;
+    toCny["CHF"] = 8.06;
+    toCny["CAD"] = 5.16;
+    toCny["AUD"] = 4.54;
+    toCny["SDG"] = 0.0117;
+    toCny["BND"] = 5.19;
+    toCny["CNY"] = 1.00;
+    toCny["LYD"] = 1.45;
+    toCny["NZD"] = 4.16;
+    toCny["FJD"] = 3.15;
+    toCny["BMD"] = 7.12;
+    toCny["BZD"] = 3.56;
+ 
+    // LYD
+    map<string, double> toLyd;
+ 
+    toLyd["USD"] = 4.81;
+    toLyd["EUR"] = 5.15;
+    toLyd["PHP"] = 0.083;
+    toLyd["GBP"] = 6.00;
+    toLyd["JPY"] = 0.033;
+    toLyd["KWD"] = 15.79;
+    toLyd["BHD"] = 12.68;
+    toLyd["OMR"] = 12.48;
+    toLyd["JOD"] = 6.87;
+    toLyd["GIP"] = 6.00;
+    toLyd["KYD"] = 6.00;
+    toLyd["CHF"] = 5.15;
+    toLyd["CAD"] = 3.58;
+    toLyd["AUD"] = 3.07;
+    toLyd["SDG"] = 0.23;
+    toLyd["BND"] = 3.58;
+    toLyd["CNY"] = 0.70;
+    toLyd["LYD"] = 1.00;
+    toLyd["NZD"] = 2.83;
+    toLyd["FJD"] = 2.15;
+    toLyd["BMD"] = 4.81;
+    toLyd["BZD"] = 2.40;
+ 
+    // NZD
+    map<string, double> toNzd;
+ 
+    toNzd["USD"] = 1.68;
+    toNzd["EUR"] = 1.79;
+    toNzd["PHP"] = 0.03;
+    toNzd["GBP"] = 2.14;
+    toNzd["JPY"] = 0.011;
+    toNzd["KWD"] = 5.54;
+    toNzd["BHD"] = 4.45;
+    toNzd["OMR"] = 4.36;
+    toNzd["JOD"] = 2.37;
+    toNzd["GIP"] = 2.14;
+    toNzd["KYD"] = 2.00;
+    toNzd["CHF"] = 1.16;
+    toNzd["CAD"] = 1.10;
+    toNzd["AUD"] = 0.95;
+    toNzd["SDG"] = 0.012;
+    toNzd["BND"] = 1.11;
+    toNzd["CNY"] = 0.22;
+    toNzd["LYD"] = 0.33;
+    toNzd["NZD"] = 1.00;
+    toNzd["FJD"] = 0.62;
+    toNzd["BMD"] = 1.68;
+    toNzd["BZD"] = 0.84;
+ 
+    // FJD
+    map<string, double> toFjd;
+ 
+    toFjd["USD"] = 2.23;
+    toFjd["EUR"] = 2.37;
+    toFjd["PHP"] = 0.039;
+    toFjd["GBP"] = 2.76;
+    toFjd["JPY"] = 0.015;
+    toFjd["KWD"] = 6.90;
+    toFjd["BHD"] = 5.94;
+    toFjd["OMR"] = 5.85;
+    toFjd["JOD"] = 3.17;
+    toFjd["GIP"] = 2.76;
+    toFjd["KYD"] = 2.73;
+    toFjd["CHF"] = 2.47;
+    toFjd["CAD"] = 1.66;
+    toFjd["AUD"] = 1.47;
+    toFjd["SDG"] = 0.0047;
+    toFjd["BND"] = 1.68;
+    toFjd["CNY"] = 0.31;
+    toFjd["LYD"] = 0.46;
+    toFjd["NZD"] = 1.39;
+    toFjd["FJD"] = 1;
+    toFjd["BMD"] = 2.23;
+    toFjd["BZD"] = 1.11;
+ 
+    // BMD
+    map<string, double> toBmd;
+   
+    toBmd["USD"] = 1.00;
+    toBmd["EUR"] = 1.11;
+    toBmd["PHP"] = 0.018;
+    toBmd["GBP"] = 1.34;
+    toBmd["JPY"] = 0.0067;
+    toBmd["KWD"] = 3.26;
+    toBmd["BHD"] = 2.65;
+    toBmd["OMR"] = 2.60;
+    toBmd["JOD"] = 1.41;
+    toBmd["GIP"] = 1.34;
+    toBmd["KYD"] = 1.20;
+    toBmd["CHF"] = 1.12;
+    toBmd["CAD"] = 0.74;
+    toBmd["AUD"] = 0.66;
+    toBmd["SDG"] = 0.017;
+    toBmd["BND"] = 0.74;
+    toBmd["CNY"] = 0.14;
+    toBmd["LYD"] = 0.21;
+    toBmd["NZD"] = 0.61;
+    toBmd["FJD"] = 0.46;
+    toBmd["BMD"] = 1.00;
+    toBmd["BZD"] = 0.50;
+ 
+    // BZD
+    map<string, double> toBzd;
+ 
+    toBzd["USD"] = 2.00;
+    toBzd["EUR"] = 2.17;
+    toBzd["PHP"] = 0.036;
+    toBzd["GBP"] = 2.52;
+    toBzd["JPY"] = 0.013;
+    toBzd["KWD"] = 6.50;
+    toBzd["BHD"] = 5.32;
+    toBzd["OMR"] = 5.20;
+    toBzd["JOD"] = 2.82;
+    toBzd["GIP"] = 2.52;
+    toBzd["KYD"] = 2.44;
+    toBzd["CHF"] = 2.20;
+    toBzd["CAD"] = 1.50;
+    toBzd["AUD"] = 1.30;
+    toBzd["SDG"] = 0.0038;
+    toBzd["BND"] = 1.45;
+    toBzd["CNY"] = 0.29;
+    toBzd["LYD"] = 0.46;
+    toBzd["NZD"] = 1.45;
+    toBzd["FJD"] = 0.90;
+    toBzd["BMD"] = 2.00;
+    toBzd["BZD"] = 1.00;
+ 
+    double amount;
+    string amountStr;
+    string fromCurrency, toCurrency, choice;
+    vector<Conversion> history;
+ 
+ do {
+
+    clearScreen();
+
+        cout << "\n-*-*-*-*-*-*-*-* WELCOME TO THE CURRENCY CONVERTER -*-*-*-*-*-*-*-*\n"
+             << "Select an option:\n1. Perform a Conversion\n2. Show Conversion History\n3. Exit\n"
+             << "========================================\n"
+             << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == "1") {
+            clearScreen();
+            cout << "================================================================================" << endl
+                    << " " << endl
+                    << "\t\t\t\t   Currency Chart" <<endl
+                    << " " << endl;
+
+            cout << endl << "\t\t  USD\t PHP\t GBP\t JPY\t KWD\t BHD\t" << endl
+                    << " " << endl
+                    << "\t\t  OMR\t JOD\t GIP\t KYD\t CHF\t CAD\t" << endl
+                    << " " << endl
+                    << "\t\t  AUD\t SDG\t BND\t CHN\t LYD\t NZD\t" << endl
+                    << " " << endl
+                    << "\t\t  CHN\t LYD\t NZD\t FJD\t BMD\t EUR\t" << endl
+                    << " " << endl
+                    << "================================================================================" <<endl; 
+
+
+            int amountAttempts = 0;
+            int fromAttempts = 0;
+            int toAttempts = 0;
+
+            // Input amount with attempt limit
+            while (amountAttempts < 3) {
+                cout << "Enter the amount to convert: ";
+                cin >> amountStr;
+
+                if (isValidNumber(amountStr) && stod(amountStr) >= 0) {
+                    amount = stod(amountStr);
+                    break;
+                } else {
+                    amountAttempts++;
+                    cout << "Invalid input! You have " << 3 - amountAttempts << " attempt/s left out of 3.\n"
+                         << "\n";
+                }
+
+                if (amountAttempts == 3) {
+                    cout << "\nAttempt limit reached. Press ENTER to return to main menu.\n";
+                    cin.ignore();
+                    cin.get(); 
+                    goto mainMenu;  // Redirect to main menu
+                }
+            }
+
+            // Input source currency with attempt limit
+            while (fromAttempts < 3) {
+                cout << "Enter the source currency code (e.g., USD, PHP): "; 
+                cin >> fromCurrency;
+                for (auto &cur : fromCurrency) cur = toupper(cur);
+
+                if (toUsd.find(fromCurrency) != toUsd.end()) {
+                    break;
+                }  else {
+                    fromAttempts++;
+                    cout << "Error! Unrecognized currency code. You have " << 3 - fromAttempts << " attempt/s left out of 3.\n"
+                         <<"\n";
+                }
+
+                if (fromAttempts == 3) {
+                    cout << "\nAttempt limit reached. Press ENTER to return to main menu.\n";
+                    cin.ignore();
+                    cin.get(); 
+                    goto mainMenu;  // Redirect to main menu
+                }
+            }
+
+            // Input target currency with attempt limit
+            while (toAttempts < 3) {
+                cout << "Enter the target currency code (e.g., EUR, JPY): "; 
+                cin >> toCurrency;
+                for (auto &cur : toCurrency) cur = toupper(cur);
+
+                if (toUsd.find(toCurrency) != toUsd.end()) {
+                    break;
+                } else {
+                    toAttempts++;
+                    cout << "Error! Unrecognized currency code. You have " << 3 - toAttempts << " attempt/s left out of 3.\n"
+                         << "\n";
+                }
+
+                if (toAttempts == 3) {
+                cout << "\nAttempt limit reached. Press ENTER to return to main menu.\n";
+                    cin.ignore();
+                    cin.get(); 
+                    goto mainMenu;  // Redirect to main menu
+                }
+            }
+
+            // Perform conversion
+            double usdAmount = amount * toUsd[fromCurrency];
+            double finalAmount = usdAmount / toUsd[toCurrency];
+            cout << fixed << setprecision(4)
+                 << "========================================================\n"
+                 << "\n" 
+                 << "\tResult: " << amount << " " << fromCurrency << " = " << finalAmount << " " << toCurrency << endl
+                 << "\n"
+                 << "========================================================\n";
+
+            // Save conversion to history
+            history.push_back({fromCurrency, toCurrency, amount, finalAmount});
+
+            cout << "Press Enter to return to the main menu...";
+            cin.ignore();
+            cin.get();
+
+        } else if (choice == "2") {
+            clearScreen();
+            showHistory(history);
+            cout << "Press ENTER to return to the main menu...";
+            cin.ignore();
+            cin.get();
+
+        } else if (choice == "3") {
+            cout << "Exiting program.\n";
+            break;
+
+        } else {
+            cout << "Invalid choice. Please press ENTER and input a valid option.";
+            cin.ignore(); 
+            cin.get(); 
+            goto mainMenu;
+            
+
+        }
+
+    mainMenu:
+        continue;
+    } while (true);
+
+    return 0;
+}
